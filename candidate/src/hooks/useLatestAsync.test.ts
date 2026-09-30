@@ -14,7 +14,7 @@ describe("useLatestAsync", () => {
     const request = deferred<string>();
     const { result } = renderHook(() => useLatestAsync(() => request.promise));
     expect(result.current.loading).toBe(false);
-    let pending!: Promise<string>;
+    let pending!: Promise<string | undefined>;
     act(() => { pending = result.current.run(); });
     expect(result.current.loading).toBe(true);
     await act(async () => {
@@ -24,22 +24,24 @@ describe("useLatestAsync", () => {
     expect(result.current.loading).toBe(false);
   });
 
-  it("keeps loading while the latest request is pending after an older request resolves", async () => {
+  it("ignores an older result and keeps loading while the latest request is pending", async () => {
     const older = deferred<string>();
     const latest = deferred<string>();
     const { result } = renderHook(() => useLatestAsync((id: string) => id === "older" ? older.promise : latest.promise));
-    let olderRun!: Promise<string>;
-    let latestRun!: Promise<string>;
+    let olderRun!: Promise<string | undefined>;
+    let latestRun!: Promise<string | undefined>;
     act(() => {
       olderRun = result.current.run("older");
       latestRun = result.current.run("latest");
     });
+    let olderValue: string | undefined;
     await act(async () => {
       older.resolve("older value");
-      expect(await olderRun).toBe("older value");
+      olderValue = await olderRun;
     });
     const loadingAfterOlderSettles = result.current.loading;
     await act(async () => { latest.resolve("latest value"); await latestRun; });
+    expect(olderValue).toBeUndefined();
     expect(loadingAfterOlderSettles).toBe(true);
     expect(result.current.loading).toBe(false);
   });
@@ -50,7 +52,7 @@ describe("useLatestAsync", () => {
     const failure = new Error("older failed");
     const { result } = renderHook(() => useLatestAsync((id: string) => id === "older" ? older.promise : latest.promise));
     let olderError!: Promise<unknown>;
-    let latestRun!: Promise<string>;
+    let latestRun!: Promise<string | undefined>;
     act(() => {
       olderError = result.current.run("older").catch((error: unknown) => error);
       latestRun = result.current.run("latest");
@@ -62,16 +64,16 @@ describe("useLatestAsync", () => {
     expect(result.current.loading).toBe(false);
   });
 
-  it("stops loading when the latest finishes even if an older request remains pending", async () => {
+  it("returns the latest result and ignores an older result that finishes afterward", async () => {
     const older = deferred<string>();
     const latest = deferred<string>();
     const { result } = renderHook(() => useLatestAsync((id: string) => id === "older" ? older.promise : latest.promise));
-    let olderRun!: Promise<string>;
-    let latestRun!: Promise<string>;
+    let olderRun!: Promise<string | undefined>;
+    let latestRun!: Promise<string | undefined>;
     act(() => { olderRun = result.current.run("older"); latestRun = result.current.run("latest"); });
     await act(async () => { latest.resolve("new"); expect(await latestRun).toBe("new"); });
     expect(result.current.loading).toBe(false);
-    await act(async () => { older.resolve("old"); expect(await olderRun).toBe("old"); });
+    await act(async () => { older.resolve("old"); expect(await olderRun).toBeUndefined(); });
     expect(result.current.loading).toBe(false);
   });
 

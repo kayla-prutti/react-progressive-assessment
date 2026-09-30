@@ -18,26 +18,29 @@ npm test
 npm run build
 ```
 
-Two tests intentionally fail in the starter. The application builds successfully before you begin. The existing UI deliberately allows overlapping requests.
+Four tests intentionally fail in the starter. The application builds successfully before you begin. The existing UI deliberately allows overlapping requests.
 
 ## Stage 1 — Debug an existing hook (20 minutes)
 
-A user reports that the loading indicator sometimes disappears while their latest search is still running.
+A user searches for one product, then quickly searches for another. The newer results appear first, but the page later switches back to results from the older search. The search input still shows the newer query.
 
-1. In **Request controls**, click **Fast request**, then click **Slow request** within 300 ms. Observe the loading indicator while the slow request is pending.
-2. Explain why the behavior occurs.
-3. Fix `src/hooks/useLatestAsync.ts` and keep the public interface `{ run, loading }` unchanged. The hook must remain generic and reusable.
+1. Enter **lamp** and click **Slow request** (3 seconds).
+2. Immediately change the input to **mug** and click **Fast request** (300 ms).
+3. The mug appears first. After the older request finishes, the starter incorrectly replaces it with the lamp.
+4. Explain why this occurs and fix `src/hooks/useLatestAsync.ts`. Keep the public interface `{ run, loading }` and retain generic argument and result types.
 
 Expected behavior:
 
-- `loading` becomes true when a request starts.
-- It stays true until the **most recently started** request settles, whether that request succeeds or fails.
-- An older request settling must not change the loading state of a newer request.
-- If a slow request starts and a later fast request finishes first, loading becomes false when that later fast request finishes, even while the older request remains pending.
-- Every invocation of `run` still resolves with its own value or rejects with its own error. The hook must not swallow errors or cancel previous callers.
+- Only the **most recently started** request may return a usable result. A superseded successful request resolves to `undefined`, whether it completes before or after the newest request.
+- `run` returns `Promise<TResult | undefined>`. The consuming component already skips `undefined` results.
+- The displayed results continue to match the latest submitted search after all requests finish.
+- `loading` becomes true when a request starts and stays true until the most recently started request settles, whether it succeeds or fails.
+- An older request settling must not change loading for a newer request.
+- If a later fast request finishes while an older slow request is still pending, loading becomes false when the later fast request finishes.
+- Rejected requests still reject with their own errors. Do not swallow errors or cancel previous callers.
 - A subsequent invocation uses the current `asyncFn` if that function changes.
 
-Run the existing hook tests, then add any regression test you think is missing. The search component already guards displayed results against stale responses; focus the fix on the hook's loading behavior.
+Run the existing hook and component tests, then add any regression test you think is missing. Fix the reusable hook rather than adding a separate stale-result guard to `ProductSearch`. Keep request controls usable during loading.
 
 ## Stage 2 — Extend the existing component (25 minutes)
 

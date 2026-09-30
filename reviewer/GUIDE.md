@@ -6,21 +6,23 @@ The candidate starter lives entirely in `candidate/`. Send only that directory o
 
 Allow approximately 75 minutes: 20 minutes debugging, 25 extending the search, and 30 building saved products. Setup time should not count against the candidate. Ask the candidate to narrate their reasoning and mention what they would improve with more time. All stages belong to one product-finder application.
 
-The original hook implementation supplied by the assessment author is preserved in the starter. Two of eight starter tests intentionally fail. The remaining six tests and the production build should pass.
+The original hook implementation supplied by the assessment author is preserved in the starter. Four of nine starter tests intentionally fail. The remaining five tests and the production build should pass.
 
 ## Stage 1: root cause and contract
 
-Every invocation sets loading to true and unconditionally sets it to false in `finally`. With overlapping calls, an older call can clear loading while the newest call is pending. The defect occurs on success and rejection; removing `console.log` does not fix it.
+The original hook returns every successful response. A slow older search can finish after a faster newer search and overwrite the displayed results. It also unconditionally clears loading in `finally`, allowing an older request to clear the newest request's loading indicator.
 
-The intended contract is latest-started-request loading, not an in-flight request counter. If A is pending and later B finishes, loading should stop even if A is still pending. Every caller retains its own result or error.
+Reproduce with a slow search for **lamp**, immediately followed by a fast search for **mug**. After both settle, the original starter shows the lamp while the input still says mug.
 
-The consuming search component already has a monotonically increasing ID to protect displayed results. That does not fix the shared hook's loading state; the candidate must change the hook itself.
+The intended contract is that only the latest-started request returns a usable value. Superseded successful calls resolve to `undefined`; the consumer already skips that value. `run` must have a return type of `Promise<TResult | undefined>`. Rejections still propagate to their individual callers. Requests are not cancelled.
 
-A small reference fix is in [useLatestAsync.reference.ts](useLatestAsync.reference.ts). Increment a ref synchronously when each invocation starts, capture the ID in that invocation, and only clear loading if it is still the latest ID. Keep the `asyncFn` callback dependency and use `finally` so failure behaves the same way as success. Removing the debug log is optional.
+Loading follows the most recently started request, rather than the number of pending requests. If later request B finishes while older A remains pending, loading should stop. If A finishes while B is pending, loading should continue.
 
-Useful regression coverage: a third request starts after the second finishes but before the first settles; the first settling must not clear the third request's loading state. Test callback changes during a pending request if time permits. Requests should use deferred promises or fake timers, rather than real-time sleeps.
+No solution implementation is included. Evaluate both stale results and loading behavior against the candidate tests. The starter must retain the supplied original buggy hook.
 
-Reject fixes that disable overlapping requests, remove tests, swallow rejections, return the newest result to all callers, or only address the calling component. Unmount protection and cancellation are optional discussions, outside the required contract.
+Useful regression coverage: a third request starts after the second finishes but before the first settles; the first must return `undefined` and must not clear the third request's loading state. Test callback changes during a pending request if time permits. Requests should use deferred promises or fake timers, rather than real-time sleeps.
+
+Reject fixes that disable overlapping requests, remove tests, swallow rejections, return stale values, return the newest result to all callers, or only address the calling component. Unmount protection and cancellation are optional discussions, outside the required contract.
 
 ## Stage 2: extension
 
@@ -38,8 +40,8 @@ A useful test saves an item twice, confirms a single entry, searches for another
 
 | Area | Points | Evidence |
 | --- | ---: | --- |
-| Bug diagnosis | 10 | Explains the older request's unconditional `finally` and overlapping calls. |
-| Hook correctness | 20 | Latest-request semantics, success/error propagation, stable behavior with changed callbacks. |
+| Bug diagnosis | 10 | Explains out-of-order responses overwriting newer results and the loading race. |
+| Hook correctness | 20 | Latest result returned, stale successes resolve to undefined, correct loading/errors and changed callbacks. |
 | Hook regression coverage | 10 | Understands existing tests and adds a meaningful scenario. |
 | Search extension | 20 | Category, reset, counts, empty/error/loading states, correct async options. |
 | Saved-products component | 25 | Parent state, reusable API, uniqueness, persistence across searches, removal/clear, accurate total. |

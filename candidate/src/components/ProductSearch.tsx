@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { formatPrice, products, searchProducts, type Product } from "../data/products";
 import { useLatestAsync } from "../hooks/useLatestAsync";
 
@@ -7,20 +7,15 @@ export function ProductSearch() {
   const [results, setResults] = useState<Product[]>(() => products.map((p) => ({ ...p })));
   const [error, setError] = useState<string | null>(null);
   const [simulateFailure, setSimulateFailure] = useState(false);
-  const latestSearch = useRef(0);
   const { run, loading } = useLatestAsync(searchProducts);
 
   async function search(delayMs: number) {
-    // This guard already protects displayed data; the hook owns loading state.
-    const searchId = ++latestSearch.current;
     setError(null);
     try {
       const nextResults = await run(query, { delayMs, fail: simulateFailure });
-      if (searchId === latestSearch.current) setResults(nextResults);
+      if (nextResults !== undefined) setResults(nextResults);
     } catch (cause) {
-      if (searchId === latestSearch.current) {
-        setError(cause instanceof Error ? cause.message : "Something went wrong.");
-      }
+      setError(cause instanceof Error ? cause.message : "Something went wrong.");
     }
   }
 
@@ -47,10 +42,10 @@ export function ProductSearch() {
 
       <fieldset className="request-controls">
         <legend>Request controls</legend>
-        <p>Click Fast request, then Slow request within 300 ms to reproduce the reported issue.</p>
+        <p>Search for lamp with Slow request, then immediately search for mug with Fast request. Observe the results after both finish.</p>
         <div className="button-row">
           <button type="button" onClick={() => void search(300)}>Fast request</button>
-          <button type="button" onClick={() => void search(1500)}>Slow request</button>
+          <button type="button" onClick={() => void search(3000)}>Slow request</button>
         </div>
         <label className="checkbox-label">
           <input
