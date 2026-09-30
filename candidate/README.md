@@ -24,16 +24,16 @@ Four tests intentionally fail in the starter. The application builds successfull
 
 A user searches for one product, then quickly searches for another. The newer results appear first, but the page later switches back to results from the older search. The search input still shows the newer query.
 
-1. Enter **lamp** and click **Slow request** (3 seconds).
-2. Immediately change the input to **mug** and click **Fast request** (300 ms).
-3. The mug appears first. After the older request finishes, the starter incorrectly replaces it with the lamp.
+1. Type **mug** quickly into the search field. Search runs immediately on each change; no button is needed.
+2. The mug appears after about 300 ms. Wait about 2.5 seconds.
+3. The older **m** response incorrectly replaces the latest results, so products such as **Reading lamp** appear even though the input still says **mug**. The mock deliberately delays single-character queries to make this reproducible.
 4. Explain why this occurs and fix `src/hooks/useLatestAsync.ts`. Keep the public interface `{ run, loading }` and retain generic argument and result types.
 
 Expected behavior:
 
 - Only the **most recently started** request may return a usable result. A superseded successful request resolves to `undefined`, whether it completes before or after the newest request.
 - `run` returns `Promise<TResult | undefined>`. The consuming component already skips `undefined` results.
-- The displayed results continue to match the latest submitted search after all requests finish.
+- The displayed results continue to match the latest typed query after all requests finish.
 - `loading` becomes true when a request starts and stays true until the most recently started request settles, whether it succeeds or fails.
 - An older request settling must not change loading for a newer request.
 - If a later fast request finishes while an older slow request is still pending, loading becomes false when the later fast request finishes.
@@ -50,7 +50,7 @@ Requirements:
 
 - Add a labeled category selector: **All categories**, **Electronics**, **Home**, and **Books**.
 - Keep the selected category in React state and pass it to the existing `searchProducts` API. Its optional `category` option is already supported.
-- A normal search uses both the text query and selected category. Do not automatically search on every keystroke or category change.
+- Preserve immediate search as the user types. Changing the category must also search using the current query and selected category.
 - Fast and slow diagnostic requests must use the same current query and category.
 - Show a result count and a useful empty state. Preserve loading and error feedback.
 - Add a **Reset filters** control that clears the query, selects all categories, and reloads all products through the async API.

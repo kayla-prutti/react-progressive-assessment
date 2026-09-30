@@ -5,18 +5,18 @@ import { ProductSearch } from "./ProductSearch";
 afterEach(() => vi.useRealTimers());
 
 describe("ProductSearch starter", () => {
-  it("searches by product name through the async API", async () => {
+  it("searches immediately as the user types without a Search button", async () => {
     vi.useFakeTimers();
     render(<ProductSearch />);
     fireEvent.change(screen.getByLabelText("Product name"), {
       target: { value: "lamp" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Search" }));
+    expect(screen.queryByRole("button", { name: "Search" })).toBeNull();
     expect(screen.getByRole("status").textContent).toBe(
       "Loading latest search…"
     );
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(700);
+      await vi.advanceTimersByTimeAsync(300);
     });
     expect(screen.getByRole("heading", { name: "Reading lamp" })).toBeTruthy();
     expect(
@@ -44,27 +44,44 @@ describe("ProductSearch starter", () => {
     expect(screen.queryByRole("alert")).toBeNull();
   });
 
-  it("keeps the newer search results when an older slow search finishes afterward", async () => {
+  it("keeps results for the full query after an older partial query finishes", async () => {
     vi.useFakeTimers();
     render(<ProductSearch />);
-    fireEvent.change(screen.getByLabelText("Product name"), {
-      target: { value: "lamp" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Slow request" }));
-    fireEvent.change(screen.getByLabelText("Product name"), {
-      target: { value: "mug" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Fast request" }));
+    for (const query of ["m", "mu", "mug"]) {
+      fireEvent.change(screen.getByLabelText("Product name"), {
+        target: { value: query },
+      });
+    }
     await act(async () => {
       await vi.advanceTimersByTimeAsync(300);
     });
     expect(screen.getByRole("heading", { name: "Ceramic mug" })).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "Reading lamp" })).toBeNull();
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(2700);
+      await vi.advanceTimersByTimeAsync(2200);
     });
-    expect(screen.queryByRole("heading", { name: "Ceramic mug" })).not.toBeNull();
+    expect(screen.getByRole("heading", { name: "Ceramic mug" })).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "Reading lamp" })).toBeNull();
     expect(screen.getByLabelText("Product name").getAttribute("value")).toBe("mug");
+  });
+
+  it("reloads all products when the user clears the query", async () => {
+    vi.useFakeTimers();
+    render(<ProductSearch />);
+    fireEvent.change(screen.getByLabelText("Product name"), {
+      target: { value: "lamp" },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(screen.queryByRole("heading", { name: "Wireless headphones" })).toBeNull();
+    fireEvent.change(screen.getByLabelText("Product name"), {
+      target: { value: "" },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(screen.getByRole("heading", { name: "Wireless headphones" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Reading lamp" })).toBeTruthy();
   });
 });

@@ -28,7 +28,12 @@ export interface SearchOptions {
 
 export async function searchProducts(
   query: string,
-  { category = "all", delayMs = 700, fail = false }: SearchOptions = {},
+  {
+    category = "all",
+    // Short queries take longer, so rapid typing produces out-of-order responses.
+    delayMs = query.trim().length === 1 ? 2500 : 300,
+    fail = false,
+  }: SearchOptions = {},
 ): Promise<Product[]> {
   await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
   if (fail) throw new Error("Search failed. Please try again.");

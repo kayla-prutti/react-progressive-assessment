@@ -6,19 +6,19 @@ The candidate starter lives entirely in `candidate/`. Send only that directory o
 
 Allow approximately 75 minutes: 20 minutes debugging, 25 extending the search, and 30 building saved products. Setup time should not count against the candidate. Ask the candidate to narrate their reasoning and mention what they would improve with more time. All stages belong to one product-finder application.
 
-The original hook implementation supplied by the assessment author is preserved in the starter. Four of nine starter tests intentionally fail. The remaining five tests and the production build should pass.
+The starter hook remains intentionally buggy; no solution implementation is included. Four of ten starter tests intentionally fail. The remaining six tests and the production build should pass.
 
 ## Stage 1: root cause and contract
 
 The original hook returns every successful response. A slow older search can finish after a faster newer search and overwrite the displayed results. It also unconditionally clears loading in `finally`, allowing an older request to clear the newest request's loading indicator.
 
-Reproduce with a slow search for **lamp**, immediately followed by a fast search for **mug**. After both settle, the original starter shows the lamp while the input still says mug.
+Reproduce by typing **mug** quickly. Requests run on every input change. Single-character queries take 2.5 seconds; longer queries take 300 ms. The mug appears first, then older **m** results add products such as Reading lamp while the input still says mug. Normal search does not require a button click.
 
 The intended contract is that only the latest-started request returns a usable value. Superseded successful calls resolve to `undefined`; the consumer already skips that value. `run` must have a return type of `Promise<TResult | undefined>`. Rejections still propagate to their individual callers. Requests are not cancelled.
 
 Loading follows the most recently started request, rather than the number of pending requests. If later request B finishes while older A remains pending, loading should stop. If A finishes while B is pending, loading should continue.
 
-No solution implementation is included. Evaluate both stale results and loading behavior against the candidate tests. The starter must retain the supplied original buggy hook.
+No solution implementation is included. Evaluate both stale results and loading behavior against the candidate tests. The starter must retain the intentionally buggy hook.
 
 Useful regression coverage: a third request starts after the second finishes but before the first settles; the first must return `undefined` and must not clear the third request's loading state. Test callback changes during a pending request if time permits. Requests should use deferred promises or fake timers, rather than real-time sleeps.
 
@@ -28,7 +28,7 @@ Reject fixes that disable overlapping requests, remove tests, swallow rejections
 
 Look for a controlled and labeled category select, correct use of the existing API's category option, a result count, useful empty state, and preservation of loading/error behavior. Reset should pass explicit cleared filter values into the next search; setting state and immediately reading stale state is a common error. Diagnostic requests should honor current filters.
 
-A useful test selects Books, submits a search, waits for the mock request, and confirms books appear while electronics do not. Another tests reset after an active filter. Do not require automatic searches; submission is the defined behavior.
+A useful test selects Books, waits for the automatic mock request, and confirms books appear while electronics do not. Another tests reset after an active filter. Typing and category changes must automatically trigger searches.
 
 ## Stage 3: composition
 

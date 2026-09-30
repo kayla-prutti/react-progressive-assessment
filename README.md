@@ -6,7 +6,7 @@ One connected React + TypeScript exercise with three stages, designed for approx
 2. **Extend (25 minutes):** add category filtering to the existing product search.
 3. **Build (30 minutes):** create a saved-products component and integrate it into the page.
 
-The starter deliberately includes the supplied buggy hook. The candidate must fix it; the starter is not a completed solution.
+Search runs as you type. Type **mug** quickly and wait 2.5 seconds to see older results overwrite the latest query. The starter deliberately includes the supplied buggy hook. The candidate must fix it; the starter is not a completed solution.
 
 ## Run the starter
 
