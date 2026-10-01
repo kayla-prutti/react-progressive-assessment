@@ -2,6 +2,10 @@ import { useState, type ChangeEvent } from "react";
 import { formatPrice, products, searchProducts, type Product } from "../data/products";
 import { useLatestAsync } from "../hooks/useLatestAsync";
 
+// STAGE 2 — Extend this component (15 minutes).
+// Add category state, a labeled selector, and a result count.
+// Both typing and category changes should search with current filter values.
+// STAGE 3 also adds Save actions; connect them to saved state in App.
 export function ProductSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>(() => products.map((p) => ({ ...p })));
@@ -11,6 +15,7 @@ export function ProductSearch() {
   async function search(searchQuery: string) {
     setError(null);
     try {
+      // STAGE 2: pass the selected category using the API's category option.
       const nextResults = await run(searchQuery);
       if (nextResults !== undefined) setResults(nextResults);
     } catch (cause) {
@@ -38,6 +43,7 @@ export function ProductSearch() {
             aria-describedby="search-hint"
           />
         </div>
+        {/* STAGE 2: add the labeled category selector here. */}
         <p id="search-hint">Results update as you type.</p>
       </div>
 
@@ -45,6 +51,7 @@ export function ProductSearch() {
         {loading ? "Loading latest search…" : "Ready"}
       </p>
       {error && <p role="alert" className="error">{error}</p>}
+      {/* STAGE 2: show the number of search results here. */}
       <ul className="products" aria-label="Search results">
         {results.map((product) => (
           <li key={product.id}>
@@ -53,6 +60,7 @@ export function ProductSearch() {
               <p className="category">{product.category}</p>
             </div>
             <span>{formatPrice(product.price)}</span>
+            {/* STAGE 3: add Save and show when this product is already saved. */}
           </li>
         ))}
       </ul>

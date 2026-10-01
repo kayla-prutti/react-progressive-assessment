@@ -1,5 +1,7 @@
 # React coding assessment: Product finder
 
+Implementation comments marked **STAGE 1**, **STAGE 2**, and **STAGE 3** identify the places to work in the source files.
+
 This is a **45-minute coding exercise** within a **60-minute meeting**. You will work on one application across three progressive stages. Focus on working behavior and clear React code. The starter includes React, TypeScript, mock data, and tests; no backend is required.
 
 ## Getting started
@@ -45,7 +47,7 @@ Add category filtering to `src/components/ProductSearch.tsx`.
 
 ## Stage 3 — Build a saved-products component (20 minutes)
 
-Create `src/components/SavedProducts.tsx` and integrate it through `src/App.tsx`.
+Implement the commented starter file `src/components/SavedProducts.tsx` and integrate it through `src/App.tsx`.
 
 - Add a **Save** action to each search result and keep saved state in the shared parent.
 - Pass saved products and a removal callback to the new component. Display each saved product's name and price, with a **Remove** button and a useful empty state.
