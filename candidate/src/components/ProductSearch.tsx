@@ -5,10 +5,14 @@ import { useLatestAsync } from "../hooks/useLatestAsync";
 // STAGE 2 — Extend this component (15 minutes).
 // Add category state, a labeled selector, and a result count.
 // Both typing and category changes should search with current filter values.
-// STAGE 3 also adds Save actions; connect them to saved state in App.
-export function ProductSearch() {
+// STAGE 3 is in AddProduct.tsx and App.tsx; catalog updates are passed in here.
+interface ProductSearchProps {
+  catalog?: readonly Product[];
+}
+
+export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Product[]>(() => products.map((p) => ({ ...p })));
+  const [results, setResults] = useState<Product[]>(() => catalog.map((p) => ({ ...p })));
   const [error, setError] = useState<string | null>(null);
   const { run, loading } = useLatestAsync(searchProducts);
 
@@ -16,7 +20,7 @@ export function ProductSearch() {
     setError(null);
     try {
       // STAGE 2: pass the selected category using the API's category option.
-      const nextResults = await run(searchQuery);
+      const nextResults = await run(searchQuery, { catalog });
       if (nextResults !== undefined) setResults(nextResults);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Something went wrong.");
@@ -60,7 +64,6 @@ export function ProductSearch() {
               <p className="category">{product.category}</p>
             </div>
             <span>{formatPrice(product.price)}</span>
-            {/* STAGE 3: add Save and show when this product is already saved. */}
           </li>
         ))}
       </ul>

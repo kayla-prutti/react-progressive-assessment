@@ -1,10 +1,18 @@
+import { useState } from "react";
+import { AddProduct } from "./components/AddProduct";
 import { ProductSearch } from "./components/ProductSearch";
+import { products, type Product } from "./data/products";
 
 export function App() {
-  // STAGE 3 — Build saved products (20 minutes).
-  // Keep saved state and save/remove callbacks here; avoid duplicate products.
-  // Pass data/callbacks to ProductSearch and the new SavedProducts component.
-  // Saved products must remain saved when search results change.
+  const [catalog, setCatalog] = useState<Product[]>(() =>
+    products.map((product) => ({ ...product })),
+  );
+
+  function handleAddProduct(product: Omit<Product, "id">) {
+    // TODO STAGE 3: assign a unique ID and add the product using setCatalog.
+    // Update the array immutably. The search already receives this catalog.
+  }
+
   return (
     <main>
       <header>
@@ -12,8 +20,10 @@ export function App() {
         <h1>Product finder</h1>
         <p>Find something for your desk, home, or bookshelf.</p>
       </header>
-      <ProductSearch />
-      {/* STAGE 3: render your SavedProducts component here. */}
+      {/* A successful addition resets the search so the new product is visible. */}
+      <ProductSearch key={catalog.length} catalog={catalog} />
+      {/* STAGE 3: implement the imported component and handler above. */}
+      <AddProduct onAdd={handleAddProduct} />
     </main>
   );
 }

@@ -7,6 +7,7 @@ h2 { margin-top: 0; font-size: 23px; }
 h3 { margin: 0; font-size: 16px; }
 p { margin: 8px 0; }
 .eyebrow { color: #42536a; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+.panel + .panel { margin-top: 24px; }
 .panel { border: 1px solid #d7dce4; border-radius: 12px; background: white; padding: 24px; }
 label { display: block; font-weight: 600; margin-bottom: 6px; }
 input, select, button { font: inherit; }

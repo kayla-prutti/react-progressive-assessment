@@ -45,17 +45,20 @@ Add category filtering to `src/components/ProductSearch.tsx`.
 - Typing or changing the category automatically searches with both current values.
 - Show the result count. Preserve existing loading, error, and empty states.
 
-## Stage 3 — Build a saved-products component (20 minutes)
+## Stage 3 — Add a product (20 minutes)
 
-Implement the commented starter file `src/components/SavedProducts.tsx` and integrate it through `src/App.tsx`.
+Implement the commented placeholder in `src/components/AddProduct.tsx` and complete `handleAddProduct` in `src/App.tsx`. The component is already imported and displayed in the app.
 
-- Add a **Save** action to each search result and keep saved state in the shared parent.
-- Pass saved products and a removal callback to the new component. Display each saved product's name and price, with a **Remove** button and a useful empty state.
-- Avoid duplicates and show when a search result is already saved.
-- Keep saved products when a search or filter hides them from results.
+- Provide labeled inputs for **Product name**, **Category** (Electronics, Home, Books), and **Price**, plus an **Add** button.
+- Reject an empty name or a price that is not a positive number. Show useful validation feedback.
+- Give each new product a unique ID and add it to catalog state without mutating the existing array.
+- After adding, the provided catalog wiring resets search and shows the updated list. Clear the form for another entry.
+- Added products must remain available when typing or changing category during this session. App already owns catalog state and passes it to search; complete the immutable update in its add handler.
 
-Use accessible labels and buttons. You do not need a combined price, a clear-all action, browser persistence, routing, or new styling.
+Example: add **Desk plant**, category **Home**, price **12**. It appears as **$12.00**. Searching for **plant** should find it.
+
+Use the provided component and callback wiring. Edit/delete actions, persistence after page reload, and new styling are not required.
 
 ## Wrap-up
 
-Run the existing tests and build. Explain your choices and anything unfinished during the discussion. If time remains, add one focused test for category filtering or saved products; new tests and written notes are optional.
+Run the existing tests and build. Explain your choices and anything unfinished during the discussion. If time remains, add one focused test for category filtering or adding a product; new tests and written notes are optional.

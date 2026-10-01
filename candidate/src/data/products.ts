@@ -21,6 +21,8 @@ export const products: readonly Product[] = [
 ];
 
 export interface SearchOptions {
+  // STAGE 3: supply the current catalog from React state when searching.
+  catalog?: readonly Product[];
   category?: CategoryFilter;
   delayMs?: number;
   fail?: boolean;
@@ -30,6 +32,7 @@ export async function searchProducts(
   query: string,
   {
     category = "all",
+    catalog = products,
     // Short queries take longer, so rapid typing produces out-of-order responses.
     delayMs = query.trim().length === 1 ? 2500 : 300,
     fail = false,
@@ -39,7 +42,7 @@ export async function searchProducts(
   if (fail) throw new Error("Search failed. Please try again.");
 
   const text = query.trim().toLowerCase();
-  return products
+  return catalog
     .filter((product) =>
       product.name.toLowerCase().includes(text) &&
       (category === "all" || product.category === category),

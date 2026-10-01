@@ -9,10 +9,10 @@ Share only `candidate/` or the candidate-only ZIP.
 | 0–5 minutes | Introductions and explain the exercise. |
 | 5–15 minutes | Stage 1: debug the hook (10 minutes). |
 | 15–30 minutes | Stage 2: extend search (15 minutes). |
-| 30–50 minutes | Stage 3: build saved products (20 minutes). |
+| 30–50 minutes | Stage 3: add a product (20 minutes). |
 | 50–60 minutes | Discuss decisions, tradeoffs, and unfinished work. |
 
-Install dependencies and check the development server before the meeting. Keep the 45-minute coding period focused on the three tasks. Additional tests, written notes, new styling, combined prices, clear-all, persistence, routing, and cancellation are not required.
+Install dependencies and check the development server before the meeting. Keep the 45-minute coding period focused on the three tasks. Additional tests, written notes, new styling, additional components, edit/delete actions, persistence, routing, and cancellation are not required.
 
 The starter intentionally contains the bug and includes no solution implementation. Four of ten tests fail: three hook checks and one search-result regression. The other six tests and the build should pass.
 
@@ -32,11 +32,13 @@ Check a controlled, labeled category select, the existing API category option, a
 
 No reset button or new component test is required. A focused category test is a useful extra if time permits.
 
-## Stage 3: saved products
+## Stage 3: add a product
 
-Check state in the shared parent, a separate component receiving products and a removal callback, stable IDs, immutable updates, unique saved products, accessible save/remove buttons, and an empty state. Filtering a product out of search results must not remove it from the saved list.
+The candidate implements the placeholder form in AddProduct.tsx and completes handleAddProduct in App.tsx. The starter already imports the component and passes its callback. App owns catalog state, and ProductSearch receives it. Check controlled name/category/price inputs, labeled controls, empty-name and positive-price validation, unique IDs, and an immutable catalog update. A successful catalog update displays the new product; the provided key resets search/filter. The candidate resets the form.
 
-Do not require a total, clear-all, browser persistence, or new styling. A focused duplicates/removal test is optional.
+The mock API accepts an optional `catalog`; ProductSearch is wired to it. The starter provides an empty add handler and a visible form placeholder, without an implementation. Do not accept a direct mutation of the exported mock dataset or an item that disappears on the next search.
+
+Manually add Desk plant / Home / 12, confirm its $12.00 display, then search for plant and choose Home. Try an empty name or invalid price. Persistence after reload, edit/delete, and additional components are not required. An add/validation test is optional.
 
 ## Evaluation (100 points)
 
@@ -44,7 +46,7 @@ Do not require a total, clear-all, browser persistence, or new styling. A focuse
 | --- | ---: | --- |
 | Debugging | 35 | Explains the race and fixes stale results plus loading with preserved callback and error behavior. |
 | Search extension | 25 | Controlled category, correct API options, live search, result count. |
-| New component | 30 | Parent-owned state, reusable props, uniqueness, persistence across filters, save/remove, empty state. |
+| Add product | 30 | Controlled form, validation, unique IDs, immutable catalog update, visible and searchable additions. |
 | Reasoning and accessibility | 10 | Explains choices, uses clear component boundaries and accessible controls, verifies behavior. |
 
 Use scores as supporting evidence. Existing tests and the build are sufficient baseline verification; treat added tests as extra evidence rather than mandatory work. Assess the completed behavior and the discussion without expanding scope beyond the 45-minute task.
