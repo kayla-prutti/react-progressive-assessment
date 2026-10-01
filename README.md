@@ -5,7 +5,7 @@ One React + TypeScript exercise with **45 minutes of coding** in a **60-minute m
 | Stage | Time | Task |
 | --- | ---: | --- |
 | 1. Debug | 10 minutes | Fix stale search results in `useLatestAsync`. |
-| 2. Extend | 15 minutes | Add category filtering and a result count. |
+| 2. Extend | 15 minutes | Wire the provided category dropdown to filtering and add a result count. |
 | 3. Add | 20 minutes | Add a product using a name/category/price form and an add function. |
 
 Reserve the other 15 minutes for introductions and discussion. Have dependencies installed and the app running before coding starts.

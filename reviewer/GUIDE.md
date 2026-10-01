@@ -28,7 +28,7 @@ Use existing tests; new hook tests are optional. If the candidate is stuck, ask 
 
 ## Stage 2: category filtering
 
-Check a controlled, labeled category select, the existing API category option, and a result count. Typing and category changes should automatically search with current query/category values. Existing loading, error, and empty states should remain useful.
+The labeled dropdown and its options are supplied. Its handler is intentionally empty. Check that the candidate makes it controlled, implements handleCategoryChange, passes the API category option, and adds a result count. Typing and category changes should automatically search with current query/category values. Existing loading, error, and empty states should remain useful.
 
 No reset button or new component test is required. A focused category test is a useful extra if time permits.
 

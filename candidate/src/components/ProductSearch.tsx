@@ -3,7 +3,7 @@ import { formatPrice, products, searchProducts, type Product } from "../data/pro
 import { useLatestAsync } from "../hooks/useLatestAsync";
 
 // STAGE 2 — Extend this component (15 minutes).
-// Add category state, a labeled selector, and a result count.
+// Connect the provided dropdown to category state and add a result count.
 // Both typing and category changes should search with current filter values.
 // STAGE 3 is in AddProduct.tsx and App.tsx; catalog updates are passed in here.
 interface ProductSearchProps {
@@ -33,6 +33,11 @@ export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
     void search(nextQuery);
   }
 
+  function handleCategoryChange(event: ChangeEvent<HTMLSelectElement>) {
+    // TODO STAGE 2: store the selected category and search with it and the current query.
+    // Keep the input search using the same selected category. No filtering is implemented yet.
+  }
+
   return (
     <section className="panel" aria-labelledby="search-heading">
       <h2 id="search-heading">Search products</h2>
@@ -47,7 +52,19 @@ export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
             aria-describedby="search-hint"
           />
         </div>
-        {/* STAGE 2: add the labeled category selector here. */}
+        <div className="filter-field">
+          <label htmlFor="category-filter">Category</label>
+          <select
+            id="category-filter"
+            defaultValue="all"
+            onChange={handleCategoryChange}
+          >
+            <option value="all">All categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="home">Home</option>
+            <option value="books">Books</option>
+          </select>
+        </div>
         <p id="search-hint">Results update as you type.</p>
       </div>
 

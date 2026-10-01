@@ -14,6 +14,8 @@ input, select, button { font: inherit; }
 input:not([type="checkbox"]), select { min-width: 0; padding: 9px 12px; border: 1px solid #8d99ab; border-radius: 6px; }
 .search-row { display: flex; flex-wrap: wrap; gap: 10px; }
 .search-row input { flex: 1; }
+.filter-field { margin-top: 14px; }
+.filter-field select { width: 100%; }
 button { padding: 9px 16px; border: 1px solid #294f83; border-radius: 6px; background: #294f83; color: white; cursor: pointer; }
 button:hover { background: #203e67; }
 button:disabled { opacity: .6; cursor: default; }

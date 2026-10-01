@@ -38,10 +38,10 @@ Use the existing tests to verify the fix. Do not add the solution to the calling
 
 ## Stage 2 — Extend product search (15 minutes)
 
-Add category filtering to `src/components/ProductSearch.tsx`.
+Implement category filtering in `src/components/ProductSearch.tsx`. The dropdown is already displayed; `handleCategoryChange` is an empty template for you to complete.
 
-- Add a labeled category selector: **All categories**, **Electronics**, **Home**, **Books**.
-- Keep the category in React state and pass it to `searchProducts` using its existing `category` option.
+- Use the provided category selector: **All categories**, **Electronics**, **Home**, **Books**. It does not filter anything yet.
+- Make the selector controlled with React state. Complete `handleCategoryChange` and pass the category to `searchProducts` using its existing `category` option.
 - Typing or changing the category automatically searches with both current values.
 - Show the result count. Preserve existing loading, error, and empty states.
 
