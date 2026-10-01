@@ -14,7 +14,7 @@ Share only `candidate/` or the candidate-only ZIP.
 
 Install dependencies and check the development server before the meeting. Keep the 45-minute coding period focused on the three tasks. Additional tests, written notes, new styling, additional components, edit/delete actions, persistence, routing, and cancellation are not required.
 
-The starter intentionally contains the bug and includes no solution implementation. Four of ten tests fail: three hook checks and one search-result regression. The other six tests and the build should pass.
+The starter intentionally contains the bug and includes no solution implementation. Four of twelve tests fail: three hook checks and one search-result regression. The other eight tests and the build should pass.
 
 ## Stage 1: stale search results
 

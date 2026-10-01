@@ -1,18 +1,21 @@
 import { useState, type ChangeEvent } from "react";
-import { formatPrice, products, searchProducts, type Product } from "../data/products";
+import {
+  formatPrice,
+  products,
+  searchProducts,
+  type Product,
+} from "../data/products";
 import { useLatestAsync } from "../hooks/useLatestAsync";
 
-// STAGE 2 — Extend this component (15 minutes).
-// Connect the provided dropdown to category state and add a result count.
-// Both typing and category changes should search with current filter values.
-// STAGE 3 is in AddProduct.tsx and App.tsx; catalog updates are passed in here.
 interface ProductSearchProps {
   catalog?: readonly Product[];
 }
 
 export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Product[]>(() => catalog.map((p) => ({ ...p })));
+  const [results, setResults] = useState<Product[]>(() =>
+    catalog.map((p) => ({ ...p }))
+  );
   const [error, setError] = useState<string | null>(null);
   const { run, loading } = useLatestAsync(searchProducts);
 
@@ -23,7 +26,9 @@ export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
       const nextResults = await run(searchQuery, { catalog });
       if (nextResults !== undefined) setResults(nextResults);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Something went wrong.");
+      setError(
+        cause instanceof Error ? cause.message : "Something went wrong."
+      );
     }
   }
 
@@ -71,7 +76,11 @@ export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
       <p role="status" aria-live="polite" className="status">
         {loading ? "Loading latest search…" : "Ready"}
       </p>
-      {error && <p role="alert" className="error">{error}</p>}
+      {error && (
+        <p role="alert" className="error">
+          {error}
+        </p>
+      )}
       {/* STAGE 2: show the number of search results here. */}
       <ul className="products" aria-label="Search results">
         {results.map((product) => (
@@ -84,7 +93,9 @@ export function ProductSearch({ catalog = products }: ProductSearchProps = {}) {
           </li>
         ))}
       </ul>
-      {results.length === 0 && <p>No products found. Try another product name.</p>}
+      {results.length === 0 && (
+        <p>No products found. Try another product name.</p>
+      )}
     </section>
   );
 }

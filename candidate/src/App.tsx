@@ -5,7 +5,7 @@ import { products, type Product } from "./data/products";
 
 export function App() {
   const [catalog, setCatalog] = useState<Product[]>(() =>
-    products.map((product) => ({ ...product })),
+    products.map((product) => ({ ...product }))
   );
 
   function handleAddProduct(product: Omit<Product, "id">) {
@@ -20,10 +20,10 @@ export function App() {
         <h1>Product finder</h1>
         <p>Find something for your desk, home, or bookshelf.</p>
       </header>
-      {/* A successful addition resets the search so the new product is visible. */}
-      <ProductSearch key={catalog.length} catalog={catalog} />
       {/* STAGE 3: implement the imported component and handler above. */}
       <AddProduct onAdd={handleAddProduct} />
+      {/* A successful addition resets the search so the new product is visible. */}
+      <ProductSearch key={catalog.length} catalog={catalog} />
     </main>
   );
 }

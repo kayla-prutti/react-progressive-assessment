@@ -93,4 +93,22 @@ describe("ProductSearch starter", () => {
     expect(screen.getByRole("heading", { name: "Wireless headphones" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Reading lamp" })).toBeTruthy();
   });
+
+  it("searches products from the catalog provided by the parent", async () => {
+    vi.useFakeTimers();
+    const catalog: productApi.Product[] = [
+      { id: "custom-1", name: "Desk plant", category: "home", price: 12 },
+      { id: "custom-2", name: "Glass vase", category: "home", price: 20 },
+    ];
+    render(<ProductSearch catalog={catalog} />);
+    fireEvent.change(screen.getByLabelText("Product name"), {
+      target: { value: "plant" },
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(screen.getByRole("heading", { name: "Desk plant" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "Glass vase" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Ceramic mug" })).toBeNull();
+  });
 });
