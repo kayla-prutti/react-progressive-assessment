@@ -1,14 +1,18 @@
 # Progressive React assessment
 
-One connected React + TypeScript exercise with three stages, designed for approximately 75 minutes.
+One React + TypeScript exercise with **45 minutes of coding** in a **60-minute meeting**.
 
-1. **Debug (20 minutes):** reproduce and fix stale search results in `useLatestAsync`.
-2. **Extend (25 minutes):** add category filtering to the existing product search.
-3. **Build (30 minutes):** create a saved-products component and integrate it into the page.
+| Stage | Time | Task |
+| --- | ---: | --- |
+| 1. Debug | 10 minutes | Fix stale search results in `useLatestAsync`. |
+| 2. Extend | 15 minutes | Add category filtering and a result count. |
+| 3. Build | 20 minutes | Build a small saved-products component with save/remove behavior. |
 
-Search runs as you type. Type **mug** quickly and wait 2.5 seconds to see older results overwrite the latest query. The starter deliberately includes the supplied buggy hook. The candidate must fix it; the starter is not a completed solution.
+Reserve the other 15 minutes for introductions and discussion. Have dependencies installed and the app running before coding starts.
 
-## Run the starter
+The page contains live search and results. Type **mug** quickly and wait 2.5 seconds to see older results overwrite the latest query. The hook intentionally remains buggy for the candidate to fix. No solution implementation is included.
+
+## Run
 
 ```sh
 cd candidate
@@ -16,20 +20,14 @@ npm ci
 npm run dev
 ```
 
-Node.js 22.12+ is required. Candidate instructions are in [candidate/README.md](candidate/README.md). Run `npm run build` for type checking and production compilation, and `npm test` for automated checks. Four tests intentionally fail before stage 1 is completed: three hook checks and one search-result regression.
+Use Node.js 22.12+. Full requirements are in [candidate/README.md](candidate/README.md). `npm test` runs the provided checks; four intentionally fail before stage 1 is completed. `npm run build` checks types and compiles the app.
 
-## Give the assessment to a candidate
+## Share with a candidate
 
-Share only the `candidate/` directory. It is a standalone application with its own instructions, dependency lockfile, and test suite. Do not give a candidate access to this entire repository: the reviewer directory includes diagnosis and scoring guidance.
-
-To create a candidate-only archive from a committed checkout:
+Share only `candidate/`, which is a standalone application. Reviewer materials contain diagnosis and evaluation guidance.
 
 ```sh
 git archive --format=zip --output=react-assessment-candidate.zip HEAD:candidate
 ```
 
-The archive contains the application at its root and excludes reviewer materials.
-
-## Review
-
-See [reviewer/GUIDE.md](reviewer/GUIDE.md) for interview prompts and the evaluation rubric. No solution implementation is included. There are no completed implementations of stages 2 or 3 in the starter.
+The archive excludes reviewer materials. See [reviewer/GUIDE.md](reviewer/GUIDE.md) for meeting structure and evaluation criteria.

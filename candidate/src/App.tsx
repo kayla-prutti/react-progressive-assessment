@@ -6,7 +6,7 @@ export function App() {
       <header>
         <p className="eyebrow">React coding assessment</p>
         <h1>Product finder</h1>
-        <p>Search a small catalog and inspect how asynchronous requests behave.</p>
+        <p>Find something for your desk, home, or bookshelf.</p>
       </header>
       <ProductSearch />
     </main>

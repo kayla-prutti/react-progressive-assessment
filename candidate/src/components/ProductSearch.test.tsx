@@ -1,8 +1,12 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ProductSearch } from "./ProductSearch";
+import * as productApi from "../data/products";
 
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describe("ProductSearch starter", () => {
   it("searches immediately as the user types without a Search button", async () => {
@@ -25,23 +29,28 @@ describe("ProductSearch starter", () => {
     expect(screen.getByRole("status").textContent).toBe("Ready");
   });
 
-  it("shows a recoverable request failure", async () => {
+  it("shows a request failure and recovers on the next typed query", async () => {
     vi.useFakeTimers();
+    vi.spyOn(productApi, "searchProducts").mockRejectedValueOnce(
+      new Error("Search failed. Please try again."),
+    );
     render(<ProductSearch />);
-    fireEvent.click(screen.getByLabelText("Simulate failed requests"));
-    fireEvent.click(screen.getByRole("button", { name: "Fast request" }));
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(300);
+      fireEvent.change(screen.getByLabelText("Product name"), {
+        target: { value: "lamp" },
+      });
     });
     expect(screen.getByRole("alert").textContent).toBe(
       "Search failed. Please try again."
     );
-    fireEvent.click(screen.getByLabelText("Simulate failed requests"));
-    fireEvent.click(screen.getByRole("button", { name: "Fast request" }));
+    fireEvent.change(screen.getByLabelText("Product name"), {
+      target: { value: "mug" },
+    });
     await act(async () => {
       await vi.advanceTimersByTimeAsync(300);
     });
     expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByRole("heading", { name: "Ceramic mug" })).toBeTruthy();
   });
 
   it("keeps results for the full query after an older partial query finishes", async () => {

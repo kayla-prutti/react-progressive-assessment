@@ -6,13 +6,12 @@ export function ProductSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>(() => products.map((p) => ({ ...p })));
   const [error, setError] = useState<string | null>(null);
-  const [simulateFailure, setSimulateFailure] = useState(false);
   const { run, loading } = useLatestAsync(searchProducts);
 
-  async function search(searchQuery: string, delayMs?: number) {
+  async function search(searchQuery: string) {
     setError(null);
     try {
-      const nextResults = await run(searchQuery, { delayMs, fail: simulateFailure });
+      const nextResults = await run(searchQuery);
       if (nextResults !== undefined) setResults(nextResults);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Something went wrong.");
@@ -35,29 +34,12 @@ export function ProductSearch() {
             id="query"
             value={query}
             onChange={handleQueryChange}
-            placeholder="Try typing mug quickly"
+            placeholder="Search products…"
             aria-describedby="search-hint"
           />
         </div>
-        <p id="search-hint">Results update as you type. Try typing mug quickly and watch the results after a few seconds.</p>
+        <p id="search-hint">Results update as you type.</p>
       </div>
-
-      <fieldset className="request-controls">
-        <legend>Request controls</legend>
-        <p>Optional controls for testing overlapping or failed requests. No button is needed for normal search.</p>
-        <div className="button-row">
-          <button type="button" onClick={() => void search(query, 300)}>Fast request</button>
-          <button type="button" onClick={() => void search(query, 3000)}>Slow request</button>
-        </div>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={simulateFailure}
-            onChange={(event) => setSimulateFailure(event.target.checked)}
-          />
-          Simulate failed requests
-        </label>
-      </fieldset>
 
       <p role="status" aria-live="polite" className="status">
         {loading ? "Loading latest search…" : "Ready"}

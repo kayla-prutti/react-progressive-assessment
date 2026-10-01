@@ -1,79 +1,59 @@
 # React coding assessment: Product finder
 
-You will work on one application across three progressive stages. Aim for about 75 minutes. Prioritize correctness and clear component boundaries over visual polish. The starter includes React, TypeScript, deterministic mock data, and tests; no backend or account is required.
+This is a **45-minute coding exercise** within a **60-minute meeting**. You will work on one application across three progressive stages. Focus on working behavior and clear React code. The starter includes React, TypeScript, mock data, and tests; no backend is required.
 
 ## Getting started
 
-Use Node.js 22.12 or newer.
+Use Node.js 22.12 or newer. Have the app running before the coding timer starts.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open the address printed by the development server. In another terminal:
+Open the address printed by the development server. Search updates immediately as you type.
 
 ```sh
 npm test
 npm run build
 ```
 
-Four tests intentionally fail in the starter. The application builds successfully before you begin. The existing UI deliberately allows overlapping requests.
+Four tests intentionally fail because of the stage 1 bug. The starter builds successfully.
 
-## Stage 1 — Debug an existing hook (20 minutes)
+## Stage 1 — Fix the search bug (10 minutes)
 
-A user searches for one product, then quickly searches for another. The newer results appear first, but the page later switches back to results from the older search. The search input still shows the newer query.
+Type **mug** quickly. Only the mug appears first. After about 2.5 seconds, other products such as **Reading lamp** incorrectly appear even though the query still says **mug**. The mock makes single-character queries slower to reproduce out-of-order responses.
 
-1. Type **mug** quickly into the search field. Search runs immediately on each change; no button is needed.
-2. The mug appears after about 300 ms. Wait about 2.5 seconds.
-3. The older **m** response incorrectly replaces the latest results, so products such as **Reading lamp** appear even though the input still says **mug**. The mock deliberately delays single-character queries to make this reproducible.
-4. Explain why this occurs and fix `src/hooks/useLatestAsync.ts`. Keep the public interface `{ run, loading }` and retain generic argument and result types.
+Explain the issue and fix `src/hooks/useLatestAsync.ts`.
 
-Expected behavior:
+- Keep the public interface `{ run, loading }` and the generic argument/result types.
+- Only the most recently started request returns its result. A superseded successful request resolves to `undefined`, whether it finishes before or after the newest request. `run` returns `Promise<TResult | undefined>`; the search component already skips `undefined` results.
+- Loading follows the most recently started request. Older requests settling must not change its loading state.
+- Keep errors propagating to callers and continue using the current `asyncFn` after it changes.
+- Fix the hook itself. Keep live search and overlapping requests working.
 
-- Only the **most recently started** request may return a usable result. A superseded successful request resolves to `undefined`, whether it completes before or after the newest request.
-- `run` returns `Promise<TResult | undefined>`. The consuming component already skips `undefined` results.
-- The displayed results continue to match the latest typed query after all requests finish.
-- `loading` becomes true when a request starts and stays true until the most recently started request settles, whether it succeeds or fails.
-- An older request settling must not change loading for a newer request.
-- If a later fast request finishes while an older slow request is still pending, loading becomes false when the later fast request finishes.
-- Rejected requests still reject with their own errors. Do not swallow errors or cancel previous callers.
-- A subsequent invocation uses the current `asyncFn` if that function changes.
+Use the existing tests to verify the fix. Do not add the solution to the calling component or replace the asynchronous mock.
 
-Run the existing hook and component tests, then add any regression test you think is missing. Fix the reusable hook rather than adding a separate stale-result guard to `ProductSearch`. Keep request controls usable during loading.
+## Stage 2 — Extend product search (15 minutes)
 
-## Stage 2 — Extend the existing component (25 minutes)
+Add category filtering to `src/components/ProductSearch.tsx`.
 
-Extend `ProductSearch` with category filtering.
+- Add a labeled category selector: **All categories**, **Electronics**, **Home**, **Books**.
+- Keep the category in React state and pass it to `searchProducts` using its existing `category` option.
+- Typing or changing the category automatically searches with both current values.
+- Show the result count. Preserve existing loading, error, and empty states.
 
-Requirements:
+## Stage 3 — Build a saved-products component (20 minutes)
 
-- Add a labeled category selector: **All categories**, **Electronics**, **Home**, and **Books**.
-- Keep the selected category in React state and pass it to the existing `searchProducts` API. Its optional `category` option is already supported.
-- Preserve immediate search as the user types. Changing the category must also search using the current query and selected category.
-- Fast and slow diagnostic requests must use the same current query and category.
-- Show a result count and a useful empty state. Preserve loading and error feedback.
-- Add a **Reset filters** control that clears the query, selects all categories, and reloads all products through the async API.
-- Keep request controls usable during loading so overlapping requests remain possible.
-- Add a meaningful component test that verifies category filtering or reset behavior.
+Create `src/components/SavedProducts.tsx` and integrate it through `src/App.tsx`.
 
-## Stage 3 — Build a new component (30 minutes)
+- Add a **Save** action to each search result and keep saved state in the shared parent.
+- Pass saved products and a removal callback to the new component. Display each saved product's name and price, with a **Remove** button and a useful empty state.
+- Avoid duplicates and show when a search result is already saved.
+- Keep saved products when a search or filter hides them from results.
 
-Build a reusable `SavedProducts` component and integrate it beside or below the search results.
+Use accessible labels and buttons. You do not need a combined price, a clear-all action, browser persistence, routing, or new styling.
 
-Requirements:
+## Wrap-up
 
-- Add a **Save** action to each search result.
-- Store saved products in the parent that coordinates search and the saved list. Pass data and callbacks into the new component.
-- Saving the same product twice must not create duplicates. A saved result should visibly indicate its saved state.
-- Keep saved products when a later search or filter hides them from results.
-- Show each saved product's name and price, the number saved, and the combined price in USD.
-- Support removing one product and clearing the list.
-- Show a useful empty state and use accessible buttons and labels.
-- Add a meaningful test covering duplicates, removal, or persistence across searches.
-
-Browser persistence, routing, third-party UI libraries, and a backend are not required. Choose the component API and layout yourself.
-
-## Submission
-
-Include your code, passing tests, and a successful build. Add a short `NOTES.md` with the bug explanation, your main implementation decisions, and anything unfinished. Do not replace the asynchronous mock with a synchronous shortcut or remove existing test expectations.
+Run the existing tests and build. Explain your choices and anything unfinished during the discussion. If time remains, add one focused test for category filtering or saved products; new tests and written notes are optional.
